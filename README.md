@@ -28,8 +28,8 @@ This is a command line interface application which using matplotlib to visualize
   
  ## Preview
  
- 
- 
+ ![complete_animation](https://user-images.githubusercontent.com/44593496/147013419-5c1bf2e9-8c2d-4125-97d5-43b9c668bf3c.gif)
+
  ## License
       
   _This application has the MIT License._
