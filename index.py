@@ -2,19 +2,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from numpy.core.fromnumeric import repeat
+import winsound
 
 full_copies = []
 idx = []
 access = []
+duration = 100  # Set Duration To 1000 ms == 1 second
+count = 0
 
 def main():
-    global full_copies, idx, access
+    global full_copies, idx, access, count
     run = True
     while run:
         print("Welcome to the Sorting Visualizer \n")
         #array size
         #n = int(input('Pleas enter the length of the array: '))
-        arr = np.round(np.linspace(0,1000,128),0)
+        arr = np.round(np.linspace(0,2000,128),0)
         print("Array of size "+ str(30) + " in range of 0-1000:")
         np.random.shuffle(arr)
         print(arr)
@@ -33,23 +36,42 @@ def main():
         else:
             print("A correction option was not selection, so we will run insertion sort...")
             arr = insertionSort(arr)
-
+        
         def update(frames):
+            global full_copies, idx, access, count
+            
+
             for (rectangle, height) in zip(container.patches, full_copies[frames]):
                 rectangle.set_height(height)
                 rectangle.set_color('#1f77b4')
-            
+                
             idxVal = idx[frames]
             accessVal = access[frames]
+            frequency = (idxVal*10) + 500
+            winsound.Beep(int(frequency), duration)
             if accessVal == 'get':
                 container.patches[idxVal].set_color('black')
             elif accessVal == 'set':
                 container.patches[idxVal].set_color('red')
+            
+            if frames == len(full_copies)-1:
+                for (rectangle, height) in zip(container.patches, full_copies[frames]):
+                    rectangle.set_height(height)
+                    rectangle.set_color('#1f77b4')
+                for num in range(0, len(arr)):
+                    frequency = (num*10) + 500
+                    winsound.Beep(int(frequency), duration)
+                    
+
             return container
-        
+
+
         ani = FuncAnimation(fig, update, frames=range(len(full_copies)), blit=False,
                                 interval=1000/60, repeat=False)
         plt.show()
+ 
+    
+
         print("Sorted Array: ")
         print(arr)
         print("Would you like to run again: (Y for yes / N for no)")
@@ -60,6 +82,9 @@ def main():
             access = []
             print("Ending...")
             run = False
+
+    
+        
 
 def insertionSort(arr):
     i = 1
