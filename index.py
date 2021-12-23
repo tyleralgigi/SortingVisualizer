@@ -2,83 +2,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from numpy.core.fromnumeric import repeat
+from matplotlib.widgets import Button, Slider
+from matplotlib.ticker import AutoLocator
 
+#array size
+n = 30
+#animation play state 
+pause = False
+#array of data
+arr = np.round(np.linspace(0,2000,n),0)
+np.random.shuffle(arr)
 
 full_copies = []
 idx = []
 access = []
-duration = 100  # Set Duration To 1000 ms == 1 second
 count = 0
-
-def main():
-    global full_copies, idx, access, count
-    run = True
-    while run:
-        print("Welcome to the Sorting Visualizer \n")
-        #array size
-        #n = int(input('Pleas enter the length of the array: '))
-        arr = np.round(np.linspace(0,2000,128),0)
-        print("Array of size "+ str(30) + " in range of 0-1000:")
-        np.random.shuffle(arr)
-        print(arr)
-
-        fig, ax = plt.subplots()
-        container = ax.bar(np.arange(0, len(arr), 1),arr, align='edge')
-
-        print("Which sorting algothrim would you like to use: \n  1. Insertion Sort \n  2. Bubble Sort \n  3. Shell Sort")
-        sorting = int(input('Pleas enter the length of the array: '))
-        if sorting == 1:
-            arr = insertionSort(arr)
-        elif sorting == 2:
-            arr = bubbleSort(arr)
-        elif sorting == 3:
-            arr = shellSort(arr)
-        else:
-            print("A correction option was not selection, so we will run insertion sort...")
-            arr = insertionSort(arr)
-        
-        def update(frames):
-            global full_copies, idx, access, count
-            
-
-            for (rectangle, height) in zip(container.patches, full_copies[frames]):
-                rectangle.set_height(height)
-                rectangle.set_color('#1f77b4')
-                
-            idxVal = idx[frames]
-            accessVal = access[frames]
-            if accessVal == 'get':
-                container.patches[idxVal].set_color('black')
-            elif accessVal == 'set':
-                container.patches[idxVal].set_color('red')
-            
-            if frames == len(full_copies)-1:
-                for (rectangle, height) in zip(container.patches, full_copies[frames]):
-                    rectangle.set_height(height)
-                    rectangle.set_color('red')
-
-            return container
-
-
-        ani = FuncAnimation(fig, update, frames=range(len(full_copies)), blit=False,
-                                interval=1000/60, repeat=False)
-        plt.show()
- 
-    
-
-        print("Sorted Array: ")
-        print(arr)
-        print("Would you like to run again: (Y for yes / N for no)")
-        ans = input('Y or N: ')
-        if ans == "n" or  ans == "N":
-            full_copies = []
-            idx = []
-            access = []
-            print("Ending...")
-            run = False
-
-    
-        
 
 def insertionSort(arr):
     i = 1
@@ -176,6 +114,84 @@ def shellSort(arr):
         gap //= 2
     return arr
 
+class Index:
+    ind = 0
+    def refresh(self, val):
+        global bars, arr, n, ani, full_copies, idx, access, pause
+        full_copies = []
+        idx = []
+        access = []
+        n = int(n_slider.val)
+        arr = np.round(np.linspace(0,2000,n),0)
+        np.random.shuffle(arr)
+        ax.cla()
+        bars.remove()
+        bars= ax.bar(np.arange(0, len(arr), 1),arr, align='center')
+        arr = shellSort(arr)
+        ani = FuncAnimation(fig, update, frames=range(len(full_copies)), blit=False,
+                                interval=1000/60, repeat=False)
+        pause = False
+        ani.resume()
 
-if __name__== "__main__":
-    main()
+    def pause(self, event):
+        global pause
+        pause = True
+        ani.pause()
+
+    def play(self, event):
+        global pause, ani
+        pause = False
+        ani.resume()
+
+def update(frames):
+    global full_copies, idx, access, count
+    if not pause:
+        for (rectangle, height) in zip(bars.patches, full_copies[frames]):
+            rectangle.set_height(height)
+            rectangle.set_color('#1f77b4')
+                    
+        idxVal = idx[frames]
+        accessVal = access[frames]
+        if accessVal == 'get':
+            bars.patches[idxVal].set_color('black')
+        elif accessVal == 'set':
+            bars.patches[idxVal].set_color('red')
+                
+        if frames == len(full_copies)-1:
+            for (rectangle, height) in zip(bars.patches, full_copies[frames]):
+                rectangle.set_height(height)
+                rectangle.set_color('red')
+
+        return bars
+
+fig, ax = plt.subplots()
+bars = ax.bar(np.arange(0, len(arr), 1),arr, align='edge')
+plt.subplots_adjust(bottom=0.25)
+axfreq = plt.axes([0.25, 0.1, 0.25, 0.03])
+n_slider = Slider(
+    ax=axfreq,
+    label='Array Size',
+    valmin=30,
+    valmax=100,
+    valinit=n,
+)
+
+
+arr = shellSort(arr)
+
+callback = Index()
+axpause = plt.axes([0.7, 0.05, 0.1, 0.075])
+axplay = plt.axes([0.59, 0.05, 0.1, 0.075])
+axrefresh = plt.axes([0.81, 0.05, 0.1, 0.075])
+brefresh = Button(axrefresh, 'Refresh')
+breplay = Button(axplay, 'Play')
+brepause = Button(axpause, 'Pause')
+brefresh.on_clicked(callback.refresh)
+breplay.on_clicked(callback.play)
+brepause.on_clicked(callback.pause)
+n_slider.on_changed(callback.refresh)
+
+
+ani = FuncAnimation(fig, update, frames=range(len(full_copies)), blit=False,
+                                interval=1000/60, repeat=False)
+plt.show()
