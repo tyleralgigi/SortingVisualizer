@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from numpy.core.fromnumeric import repeat
-import winsound
+
 
 full_copies = []
 idx = []
@@ -47,8 +47,6 @@ def main():
                 
             idxVal = idx[frames]
             accessVal = access[frames]
-            frequency = (idxVal*10) + 500
-            winsound.Beep(int(frequency), duration)
             if accessVal == 'get':
                 container.patches[idxVal].set_color('black')
             elif accessVal == 'set':
@@ -57,11 +55,7 @@ def main():
             if frames == len(full_copies)-1:
                 for (rectangle, height) in zip(container.patches, full_copies[frames]):
                     rectangle.set_height(height)
-                    rectangle.set_color('#1f77b4')
-                for num in range(0, len(arr)):
-                    frequency = (num*10) + 500
-                    winsound.Beep(int(frequency), duration)
-                    
+                    rectangle.set_color('red')
 
             return container
 
