@@ -14,7 +14,7 @@ def main():
         print("Welcome to the Sorting Visualizer \n")
         #array size
         #n = int(input('Pleas enter the length of the array: '))
-        arr = np.round(np.linspace(0,1000,30),0)
+        arr = np.round(np.linspace(0,1000,128),0)
         print("Array of size "+ str(30) + " in range of 0-1000:")
         np.random.shuffle(arr)
         print(arr)
@@ -22,12 +22,14 @@ def main():
         fig, ax = plt.subplots()
         container = ax.bar(np.arange(0, len(arr), 1),arr, align='edge')
 
-        print("Which sorting algothrim would you like to use: \n  1. Insertion Sort \n  2. Bubble Sort")
+        print("Which sorting algothrim would you like to use: \n  1. Insertion Sort \n  2. Bubble Sort \n  3. Shell Sort")
         sorting = int(input('Pleas enter the length of the array: '))
         if sorting == 1:
             arr = insertionSort(arr)
         elif sorting == 2:
             arr = bubbleSort(arr)
+        elif sorting == 3:
+            arr = shellSort(arr)
         else:
             print("A correction option was not selection, so we will run insertion sort...")
             arr = insertionSort(arr)
@@ -56,7 +58,7 @@ def main():
             full_copies = []
             idx = []
             access = []
-            print("Ending..")
+            print("Ending...")
             run = False
 
 def insertionSort(arr):
@@ -106,6 +108,54 @@ def bubbleSort(arr):
                 access.append('set')
     return arr
 
+def shellSort(arr):
+    gap = len(arr) // 2
+    while gap > 0:
+        i = 0
+        j = gap
+        while j < len(arr):
+            if arr[i]>arr[j]:
+                temp = arr[j]
+                full_copies.append(np.copy(arr))
+                idx.append(j)
+                access.append('get')
+                
+                arr[j] = arr[i]
+                full_copies.append(np.copy(arr))
+
+                idx.append(j)
+                access.append('set')
+                
+                arr[i] = temp
+                full_copies.append(np.copy(arr))
+                idx.append(i)
+                access.append('set')   
+            i += 1
+            j += 1
+            
+            k = i
+            while k - gap > -1:
+ 
+                if arr[k - gap] > arr[k]:
+                    temp = arr[k-gap]
+                    full_copies.append(np.copy(arr))
+                    idx.append(k-gap)
+                    access.append('get')
+                    
+                    arr[k-gap] = arr[k]
+                    full_copies.append(np.copy(arr))
+
+                    idx.append(k-gap)
+                    access.append('set')
+                    
+                    arr[k] = temp
+                    full_copies.append(np.copy(arr))
+                    idx.append(k)
+                    access.append('set') 
+
+                k -= 1
+        gap //= 2
+    return arr
 
 
 if __name__== "__main__":
