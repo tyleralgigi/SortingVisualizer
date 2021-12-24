@@ -28,7 +28,7 @@ This is a command line interface application which using matplotlib to visualize
   
  ## Preview
  
- ![complete_animation](https://user-images.githubusercontent.com/44593496/147013419-5c1bf2e9-8c2d-4125-97d5-43b9c668bf3c.gif)
+ ![2021-12-24 14-12-19_Trim](https://user-images.githubusercontent.com/44593496/147369870-4e555686-e4b5-4854-be96-4a534c6a4840.gif)
 
  ## License
       
