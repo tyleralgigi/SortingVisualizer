@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from numpy.core.fromnumeric import repeat
-from matplotlib.widgets import Button, Slider
+from matplotlib.widgets import Button, Slider, RadioButtons
 from matplotlib.ticker import AutoLocator
 
 #array size
@@ -17,6 +17,7 @@ full_copies = []
 idx = []
 access = []
 count = 0
+sortName = 'Shell Sort'
 
 def insertionSort(arr):
     i = 1
@@ -127,7 +128,12 @@ class Index:
         ax.cla()
         bars.remove()
         bars= ax.bar(np.arange(0, len(arr), 1),arr, align='center')
-        arr = shellSort(arr)
+        if val == 'Shell Sort':
+            arr = shellSort(arr)
+        elif val == "Bubble Sort":
+            arr = bubbleSort(arr)
+        elif val == "Insertion Sort":
+            arr = insertionSort(arr)
         ani = FuncAnimation(fig, update, frames=range(len(full_copies)), blit=False,
                                 interval=1000/60, repeat=False)
         pause = False
@@ -142,6 +148,7 @@ class Index:
         global pause, ani
         pause = False
         ani.resume()
+    
 
 def update(frames):
     global full_copies, idx, access, count
@@ -166,7 +173,7 @@ def update(frames):
 
 fig, ax = plt.subplots()
 bars = ax.bar(np.arange(0, len(arr), 1),arr, align='edge')
-plt.subplots_adjust(bottom=0.25)
+plt.subplots_adjust(bottom=0.45)
 axfreq = plt.axes([0.25, 0.1, 0.25, 0.03])
 n_slider = Slider(
     ax=axfreq,
@@ -181,16 +188,20 @@ arr = shellSort(arr)
 
 callback = Index()
 axpause = plt.axes([0.7, 0.05, 0.1, 0.075])
+axradio = plt.axes([0.7, 0.2, 0.2, 0.15])
 axplay = plt.axes([0.59, 0.05, 0.1, 0.075])
 axrefresh = plt.axes([0.81, 0.05, 0.1, 0.075])
+
 brefresh = Button(axrefresh, 'Refresh')
 breplay = Button(axplay, 'Play')
 brepause = Button(axpause, 'Pause')
+radio1 = RadioButtons(axradio, ('Shell Sort', 'Bubble Sort', 'Insertion Sort', ))
+
 brefresh.on_clicked(callback.refresh)
 breplay.on_clicked(callback.play)
 brepause.on_clicked(callback.pause)
 n_slider.on_changed(callback.refresh)
-
+radio1.on_clicked(callback.refresh)
 
 ani = FuncAnimation(fig, update, frames=range(len(full_copies)), blit=False,
                                 interval=1000/60, repeat=False)
