@@ -2,7 +2,7 @@
  
 ## Description
 
-This is a command line interface application which using matplotlib to visualizes serveral sorting algothrims such as; insertion sort, bubble sort and Shell Sort.
+This is a command line interface application which using matplotlib to visualizes several sorting algorithms such as; insertion sort, bubble sort and Shell Sort. 
 
 ![badge](https://img.shields.io/badge/license-MITLicense-brightorange)
 
